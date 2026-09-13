@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="QuizMaster — Top 25 Technical Interview Questions across 15 subjects.">
+    <title>QuizMaster — Choose a Subject</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=20260913v15">
+</head>
+<body class="light-theme">
+
+    <!-- ==================== TOP NAVIGATION NAVBAR ==================== -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand-logo" id="nav-brand-logo">
+                <img src="images/quizmaster-logo.png" alt="QuizMaster" class="brand-logo-img">
+            </a>
+        </div>
+    </nav>
+
+    <!-- ==================== HOME PAGE ==================== -->
+    <section id="home-page" class="page active">
+        <div class="container main-container">
+            
+            <!-- Hero Section -->
+            <header class="hero-section">
+                <h1 class="hero-title">Choose a <span class="gradient-text-subject">Subject</span></h1>
+            </header>
+
+            <!-- Subjects Grid -->
+            <div id="subjects-grid" class="subjects-grid">
+                <!-- Injected dynamically by JavaScript -->
+            </div>
+
+
+
+        </div>
+    </section>
+
+    <!-- ==================== QUIZ PAGE ==================== -->
+    <section id="quiz-page" class="page">
+        <div class="container quiz-container">
+            <div class="quiz-top-bar">
+                <button id="back-btn" class="btn-icon" title="Back to Subjects">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    <span>Back</span>
+                </button>
+                <div id="timer-display" class="timer-display">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="timer-text">25:00</span>
+                </div>
+            </div>
+
+            <header class="quiz-header">
+                <div class="quiz-subject-badge" id="quiz-subject-badge">
+                    <span id="quiz-subject-icon" class="quiz-icon"></span>
+                    <span id="quiz-subject-title"></span>
+                </div>
+                <div class="quiz-progress">
+                    <span id="question-counter" class="question-counter"></span>
+                    <div class="progress-bar-track">
+                        <div id="progress-bar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+                <div id="question-palette" class="question-palette">
+                    <!-- Injected by JavaScript -->
+                </div>
+            </header>
+
+            <div class="question-card">
+                <p id="question-text" class="question-text"></p>
+                <div id="options-container" class="options-container">
+                    <!-- Options injected by JavaScript -->
+                </div>
+            </div>
+
+            <div class="quiz-actions">
+                <button id="prev-btn" class="btn btn-ghost" disabled>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Previous
+                </button>
+                <button id="next-btn" class="btn btn-primary" disabled>
+                    Next
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== RESULT PAGE ==================== -->
+    <section id="result-page" class="page">
+        <div class="container result-container">
+            <header class="result-header">
+                <div class="result-icon" id="result-icon">🏆</div>
+                <h1 class="result-title">Quiz Completed!</h1>
+                <p id="result-subject" class="result-subject"></p>
+            </header>
+
+            <div class="score-ring-container">
+                <div class="score-ring">
+                    <svg viewBox="0 0 120 120" class="score-ring-svg">
+                        <defs>
+                            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#7c3aed"/>
+                                <stop offset="100%" stop-color="#2563eb"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                        <circle cx="60" cy="60" r="52" class="ring-fill" id="score-ring-circle"/>
+                    </svg>
+                    <div class="score-ring-text">
+                        <span id="percentage-display" class="ring-percent">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-board">
+                <div class="score-item">
+                    <span class="score-icon">📝</span>
+                    <span id="total-questions" class="score-value">25</span>
+                    <span class="score-label">Total</span>
+                </div>
+                <div class="score-item correct">
+                    <span class="score-icon">✅</span>
+                    <span id="correct-answers" class="score-value">0</span>
+                    <span class="score-label">Correct</span>
+                </div>
+                <div class="score-item wrong">
+                    <span class="score-icon">❌</span>
+                    <span id="wrong-answers" class="score-value">0</span>
+                    <span class="score-label">Wrong</span>
+                </div>
+                <div class="score-item time">
+                    <span class="score-icon">⏱️</span>
+                    <span id="time-taken" class="score-value">0:00</span>
+                    <span class="score-label">Time</span>
+                </div>
+            </div>
+
+            <div class="result-actions">
+                <button id="retry-btn" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                    Retry Quiz
+                </button>
+                <button id="back-home-btn" class="btn btn-secondary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Back to Subjects
+                </button>
+            </div>
+
+            <h2 class="review-heading">📋 Answer Review</h2>
+            <div id="review-container" class="review-container">
+                <!-- Review cards injected by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+    <script src="script.js?v=20260913v15"></script>
+</body>
+</html>
