@@ -1015,3 +1015,208 @@ body.dark-theme .floating-badge-progress {
     background: rgba(239, 68, 68, 0.1);
     color: #dc2626;
 }
+
+/* ============================================================
+   NAME INPUT MODAL
+   ============================================================ */
+.name-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.name-modal-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: modalSlideUp 0.35s ease;
+}
+
+body.dark-theme .name-modal-card {
+    background: #1e293b;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.name-modal-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+}
+
+.name-modal-title {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--clr-text-heading);
+    margin-bottom: 0.4rem;
+}
+
+.name-modal-subtitle {
+    font-size: 0.95rem;
+    color: var(--clr-text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.name-modal-input {
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+    border: 2px solid var(--clr-border);
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--clr-text);
+    background: var(--clr-bg);
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    margin-bottom: 1.25rem;
+}
+
+.name-modal-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.name-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.name-modal-btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+.leaderboard-section {
+    margin-bottom: 2.5rem;
+}
+
+.leaderboard-heading {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--clr-text-heading);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.leaderboard-table-container {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th {
+    padding: 0.85rem 1.25rem;
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--clr-text-muted);
+    background: rgba(99, 102, 241, 0.04);
+    border-bottom: 1px solid var(--clr-border);
+}
+
+.leaderboard-table td {
+    padding: 0.9rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--clr-text);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.leaderboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+.leaderboard-table tr:hover td {
+    background: rgba(99, 102, 241, 0.03);
+}
+
+.leaderboard-rank {
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.leaderboard-rank-1 {
+    color: #d97706;
+}
+
+.leaderboard-rank-2 {
+    color: #6b7280;
+}
+
+.leaderboard-rank-3 {
+    color: #b45309;
+}
+
+.leaderboard-name {
+    font-weight: 700;
+    color: var(--clr-text-heading);
+}
+
+.leaderboard-highlight td {
+    background: rgba(79, 70, 229, 0.06) !important;
+}
+
+.leaderboard-score {
+    font-weight: 700;
+    color: #16a34a;
+}
+
+.leaderboard-time {
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.leaderboard-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--clr-text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+@media (max-width: 540px) {
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
