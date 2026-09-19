@@ -558,6 +558,14 @@ const reviewContainer = document.getElementById("review-container");
 const retryBtn        = document.getElementById("retry-btn");
 const backHomeBtn     = document.getElementById("back-home-btn");
 
+const nameModalOverlay = document.getElementById("name-modal-overlay");
+const nameModalInput   = document.getElementById("name-modal-input");
+const nameModalSubmit  = document.getElementById("name-modal-submit");
+const nameModalSkip    = document.getElementById("name-modal-skip");
+
+const leaderboardSection = document.getElementById("leaderboard-section");
+const leaderboardContainer = document.getElementById("leaderboard-table-container");
+
 
 // ============================================================
 //  HIGH SCORE PERSISTENCE
@@ -747,11 +755,69 @@ function updateTimerDisplay() {
 
 
 // ============================================================
+//  OPTION SHUFFLING & LENGTH BALANCING
+// ============================================================
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function balanceOptionLengths(options, correctAnswer) {
+    const suffixes = [
+        " in standard system environments",
+        " for application workflows",
+        " within software architecture",
+        " during runtime execution",
+        " across system infrastructure"
+    ];
+    
+    let maxLen = 0;
+    options.forEach(opt => {
+        if (opt.length > maxLen) maxLen = opt.length;
+    });
+
+    let newCorrectAnswer = correctAnswer;
+    const balancedOptions = options.map((opt, idx) => {
+        if (maxLen - opt.length >= 25 && opt.length < 55) {
+            const suffix = suffixes[idx % suffixes.length];
+            const newOpt = opt + suffix;
+            if (opt === correctAnswer) {
+                newCorrectAnswer = newOpt;
+            }
+            return newOpt;
+        }
+        return opt;
+    });
+
+    return {
+        options: balancedOptions,
+        answer: newCorrectAnswer
+    };
+}
+
+
+// ============================================================
 //  START QUIZ
 // ============================================================
 function startQuiz(subjectName) {
     currentSubject = subjectName;
-    currentQuestions = subjects[subjectName];
+    const rawQuestions = subjects[subjectName] || [];
+    
+    // Process questions: equalize option lengths & shuffle options randomly
+    currentQuestions = rawQuestions.map(q => {
+        const balanced = balanceOptionLengths(q.options, q.answer);
+        const shuffledOpts = shuffleArray(balanced.options);
+        return {
+            question: q.question,
+            options: shuffledOpts,
+            answer: balanced.answer
+        };
+    });
+
     currentQuestionIndex = 0;
     userAnswers = new Array(currentQuestions.length).fill(null);
 
@@ -948,6 +1014,106 @@ document.addEventListener("keydown", (e) => {
 
 
 // ============================================================
+//  LEADERBOARD MANAGEMENT (TOP 3)
+// ============================================================
+function getLeaderboard(subject) {
+    try {
+        const data = localStorage.getItem(`quizmaster_lb_${subject}`);
+        return data ? JSON.parse(data) : [];
+    } catch(e) {
+        return [];
+    }
+}
+
+function saveLeaderboard(subject, entries) {
+    try {
+        localStorage.setItem(`quizmaster_lb_${subject}`, JSON.stringify(entries.slice(0, 3)));
+    } catch(e) {}
+}
+
+function isTop3Record(subject, correct, total, timeSeconds) {
+    const lb = getLeaderboard(subject);
+    if (lb.length < 3) return true;
+    
+    // Compare against 3rd place entry (index 2)
+    const last = lb[lb.length - 1];
+    if (correct > last.correct) return true;
+    if (correct === last.correct && timeSeconds < last.timeSeconds) return true;
+    return false;
+}
+
+function addLeaderboardEntry(subject, name, correct, total, timeSeconds, timeFormatted) {
+    let lb = getLeaderboard(subject);
+    const entry = {
+        name: name.trim() || "Anonymous",
+        correct: correct,
+        total: total,
+        percent: Math.round((correct / total) * 100),
+        timeSeconds: timeSeconds,
+        timeFormatted: timeFormatted,
+        date: new Date().toLocaleDateString()
+    };
+    lb.push(entry);
+    // Sort descending by correct answers, ascending by time
+    lb.sort((a, b) => {
+        if (b.correct !== a.correct) return b.correct - a.correct;
+        return a.timeSeconds - b.timeSeconds;
+    });
+    lb = lb.slice(0, 3);
+    saveLeaderboard(subject, lb);
+    return lb;
+}
+
+function renderLeaderboard(subject, highlightEntry = null) {
+    const lb = getLeaderboard(subject);
+    if (!leaderboardSection || !leaderboardContainer) return;
+
+    if (lb.length === 0) {
+        leaderboardSection.style.display = "none";
+        return;
+    }
+
+    leaderboardSection.style.display = "block";
+
+    const trophies = ["🥇 1st", "🥈 2nd", "🥉 3rd"];
+    let html = `
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                    <th>Time</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    lb.forEach((entry, index) => {
+        const rankLabel = trophies[index] || `#${index + 1}`;
+        const isHighlighted = highlightEntry && 
+            entry.name === highlightEntry.name && 
+            entry.correct === highlightEntry.correct && 
+            entry.timeSeconds === highlightEntry.timeSeconds;
+
+        html += `
+            <tr class="${isHighlighted ? 'highlight-row' : ''}">
+                <td class="rank-cell"><span class="rank-badge rank-${index + 1}">${rankLabel}</span></td>
+                <td class="name-cell">${escapeHTML(entry.name)}</td>
+                <td class="score-cell">${entry.correct}/${entry.total} (${entry.percent}%)</td>
+                <td class="time-cell">⏱️ ${entry.timeFormatted}</td>
+                <td class="date-cell">${entry.date}</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+    leaderboardContainer.innerHTML = html;
+}
+
+
+// ============================================================
 //  SHOW RESULTS
 // ============================================================
 function showResults() {
@@ -1023,6 +1189,49 @@ function showResults() {
 
         reviewContainer.appendChild(card);
     });
+
+    // Check Top 3 Leaderboard Eligibility
+    if (isTop3Record(currentSubject, correct, total, elapsedSeconds)) {
+        if (nameModalOverlay) {
+            nameModalOverlay.style.display = "flex";
+            if (nameModalInput) {
+                nameModalInput.value = "";
+                setTimeout(() => nameModalInput.focus(), 100);
+            }
+
+            const handleSubmit = () => {
+                const userName = (nameModalInput ? nameModalInput.value : "").trim() || "Anonymous";
+                nameModalOverlay.style.display = "none";
+                addLeaderboardEntry(currentSubject, userName, correct, total, elapsedSeconds, timeFormatted);
+                renderLeaderboard(currentSubject, { name: userName, correct, timeSeconds: elapsedSeconds });
+                cleanup();
+            };
+
+            const handleSkip = () => {
+                nameModalOverlay.style.display = "none";
+                renderLeaderboard(currentSubject);
+                cleanup();
+            };
+
+            const handleKeydown = (e) => {
+                if (e.key === "Enter") handleSubmit();
+            };
+
+            function cleanup() {
+                if (nameModalSubmit) nameModalSubmit.removeEventListener("click", handleSubmit);
+                if (nameModalSkip) nameModalSkip.removeEventListener("click", handleSkip);
+                if (nameModalInput) nameModalInput.removeEventListener("keydown", handleKeydown);
+            }
+
+            if (nameModalSubmit) nameModalSubmit.addEventListener("click", handleSubmit);
+            if (nameModalSkip) nameModalSkip.addEventListener("click", handleSkip);
+            if (nameModalInput) nameModalInput.addEventListener("keydown", handleKeydown);
+        } else {
+            renderLeaderboard(currentSubject);
+        }
+    } else {
+        renderLeaderboard(currentSubject);
+    }
 
     showPage(resultPage);
 }
